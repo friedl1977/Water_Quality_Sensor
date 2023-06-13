@@ -1,41 +1,43 @@
 /*
  * Project Water_Quality_Sensor
- * Description:
- * Author:
- * Date:
+ * Description:  Provdides Elicatrical Conducticity, Turbidity and TDS readings
+ * Author:  F BASSON ~ FireFli
+ * Date: 13 June 2023
  */
  
 #include "math.h" 
  
-#define TurbiditySensorPin A0
-#define TdsSensorPin A5
-#define VREF 3.3                            // analog reference voltage(Volt) of the ADC
+#define TurbiditySensorPin A0               // Sensor pin for the Turbidity Sensor
+#define TdsSensorPin A5                     // Sensor pin for the TDS and EC Sensor
+#define VREF 3.3                            // analog reference voltage of the ADC
 #define SCOUNT 30                           // sum of sample point
 
 // EC and TDS sensor declarations // 
 
 int analogBuffer[SCOUNT];                   // store the analog value in the array, read from ADC
-int analogBufferTemp[SCOUNT];
+int analogBufferTemp[SCOUNT];               // DO NOT CHANGE THESE
 int analogBufferIndex = 0;
 int copyIndex = 0;
+
 float averageVoltage = 0;
 float tdsValue = 0;
 float ecValue = 0;
-int temperature = 25;
+int temperature = 25;                       // Estimated water temperature.  Ideally we need to connect a temp sensor.
 
 // Trubidity sensor declarations // 
 
-int TurbiditySensorValue = 0;
-float turbidity_voltage = 0;
+int TurbiditySensorValue = 0;               // Raw value read by Turbudity Senspor
+float turbidity_voltage = 0;                // Raw value mapped to 3V3
 float volt = 0;
 float ntu = 0;
-float turbidity_percentage = 0;
+//float turbidity_percentage = 0; 
 
 
 void setup() {
   
  Serial.begin(115200);
- pinMode(TurbiditySensorPin,INPUT);
+ 
+ pinMode(TurbiditySensorPin,INPUT);         // Declare analog pins as input pins
  pinMode(TdsSensorPin, INPUT);
 
 }
@@ -77,7 +79,7 @@ void TDS() {
   Serial.print(ecValue, 2);
   Serial.println("mS/m");
   
-  //Particle.publish("TDS:" + String(tdsValue, 2) + "ppm", PRIVATE);
+  //Particle.publish("TDS:" + String(tdsValue, 2) + "ppm", PRIVATE);        // Uncomment if you want to publish to Particle Cloud
   //Particle.publish("EC:" + String(ecValue, 2) + "mS/m", PRIVATE);
 
   }
@@ -87,7 +89,7 @@ void Turbidity() {
 
   int sensorValue = 0;
   
-  for(int i=0; i<1000; i++) {
+  for(int i=0; i<1000; i++) {                                               // Take 1000 samples and average 
     sensorValue += (analogRead(TurbiditySensorPin));
   }
 
@@ -97,33 +99,35 @@ void Turbidity() {
   //sensorValue = analogRead(TurbiditySensorPin);
   Serial.println(sensorValue);
   
-  int turbidity = map(sensorValue, 30, 990, 100, 0);
+  int turbidity = map(sensorValue, 30, 990, 100, 0);                        // sensor calibration, sensor min value, sensor max value.  Map to 0 - 100. 
   delay(100);
   
-    if (turbidity < 20) {
-        //Particle.publish("its CLEAR " + String(turbidity), PRIVATE);
-  
-        } else  if ((turbidity > 20) && (turbidity < 50)) {
-            //Particle.publish("its CLoUDY "+ String(turbidity), PRIVATE);
-        
-        } else if (turbidity > 50) {
-            //Particle.publish("its DiRTY "+ String(turbidity), PRIVATE);
-        }
+    if (turbidity < 20) {                                                   // You can determine you own thresholds.
+        //Particle.publish("CLEAN: " + String(turbidity), PRIVATE);         // You can also add more if need be e.g. 0-5  = VERY CLEAN, 5-10 = CLEAN etc. 
+          Serial.print("CLEAN: ");
+          Serial.print(turbidity, 2);
 
-        Serial.println(turbidity);
+        } else  if ((turbidity > 20) && (turbidity < 50)) {                 // You can determine you own thresholds.
+            //Particle.publish("MURKY: "+ String(turbidity), PRIVATE);
+            Serial.print("MURKY: ");
+            Serial.print(turbidity, 2);
+        
+        } else if (turbidity > 50) {                                        // You can determine you own thresholds.
+            //Particle.publish("DIRTY: "+ String(turbidity), PRIVATE);
+            Serial.print("DIRTY: ");
+            Serial.print(turbidity, 2);
+        }
 }
 
 void loop() {
   
-  TDS();
-  Turbidity();
-  //turbidity_exp ();
-  //delay(10000);
-
+  TDS();                         // If using Particle Publish using timers not to exceed 
+  Turbidity();                   // the rate limit!  DO NOT USE DELAY() as it will cause
+                                 // the EC sensor to function incorrectly.                                                                                                     
 }
 
 
-  int getMedianNum(int bArray[], int iFilterLen) {
+  int getMedianNum(int bArray[], int iFilterLen) {                // median filtering algorithm - DO NOT CHANGE
     int bTab[iFilterLen];
     for (byte i = 0; i<iFilterLen; i++)
     bTab[i] = bArray[i];
@@ -146,31 +150,3 @@ void loop() {
     bTemp = (bTab[iFilterLen / 2] + bTab[iFilterLen / 2 - 1]) / 2;
       return bTemp;
 }
-
-// void turbidity_exp () {
-
-//   volt = 0;
-
-//     for(int i=0; i<1000; i++) {
-        
-//     volt += ((float)analogRead(TurbiditySensorPin)/4095)*3.3;
-//     }
-    
-//     volt = volt/1000;
-  
-//         if (volt < 1.6913) {
-//             ntu = 3000;
-//         }
-//             else if (volt < 2.7720) {
-//                 ntu = -2572.2 * pow(volt, 2) + 8700.5 * volt - 4352.9;
-//         }
-//             else {
-//                 ntu = 0;
-//         }
-  
-//     turbidity_percentage = ((3.5/4550)*ntu);
-//     Particle.publish("NTU: " + String(ntu,2) + "NTU Ratio: " + String(turbidity_percentage, 2), PRIVATE);
-  
-//     delay(100); 
-    
-//}
