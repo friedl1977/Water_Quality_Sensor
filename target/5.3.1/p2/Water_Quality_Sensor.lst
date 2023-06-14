@@ -1392,7 +1392,7 @@ void Turbidity() {
  23fb5e0:	f04f 33ff 	mov.w	r3, #4294967295	; 0xffffffff
  23fb5e4:	f8df c11c 	ldr.w	ip, [pc, #284]	; 23fb704 <_Z9Turbidityv+0x1d8>
           tft.setTextColor(ST77XX_WHITE);
-          tft.setCursor(130, 205);
+          tft.setCursor(150, 205);
           tft.print("CLEAN");
  23fb5e8:	4942      	ldr	r1, [pc, #264]	; (23fb6f4 <_Z9Turbidityv+0x1c8>)
  23fb5ea:	e9c4 c304 	strd	ip, r3, [r4, #16]
@@ -1400,7 +1400,7 @@ void Turbidity() {
             Serial.println(turbidity);
             tft.fillRect(115,151,180,59,ST77XX_RED);
             tft.setTextColor(ST77XX_WHITE);
-            tft.setCursor(130, 205);
+            tft.setCursor(150, 205);
             tft.print("DIRTY");
  23fb5ee:	483f      	ldr	r0, [pc, #252]	; (23fb6ec <_Z9Turbidityv+0x1c0>)
  23fb5f0:	e02a      	b.n	23fb648 <_Z9Turbidityv+0x11c>
@@ -1530,7 +1530,7 @@ void Turbidity() {
  23fb6f8:	00000000 	.word	0x00000000
  23fb6fc:	42480000 	.word	0x42480000
  23fb700:	023fe3f6 	.word	0x023fe3f6
- 23fb704:	00cd0082 	.word	0x00cd0082
+ 23fb704:	00cd0096 	.word	0x00cd0096
  23fb708:	023fe3fe 	.word	0x023fe3fe
  23fb70c:	023fe43c 	.word	0x023fe43c
  23fb710:	00cd000f 	.word	0x00cd000f

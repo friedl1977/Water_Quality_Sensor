@@ -239,7 +239,7 @@ void Turbidity() {
           Serial.println(turbidity);
           tft.fillRect(115,151,180,59,ST77XX_RED);
           tft.setTextColor(ST77XX_WHITE);
-          tft.setCursor(130, 205);
+          tft.setCursor(150, 205);
           tft.print("CLEAN");
 
 
@@ -249,7 +249,7 @@ void Turbidity() {
             Serial.println(turbidity);
             tft.fillRect(115,151,180,59,ST77XX_RED);
             tft.setTextColor(ST77XX_WHITE);
-            tft.setCursor(130, 205);
+            tft.setCursor(150, 205);
             tft.print("MURKY");
  
         
@@ -259,7 +259,7 @@ void Turbidity() {
             Serial.println(turbidity);
             tft.fillRect(115,151,180,59,ST77XX_RED);
             tft.setTextColor(ST77XX_WHITE);
-            tft.setCursor(130, 205);
+            tft.setCursor(150, 205);
             tft.print("DIRTY");
         }
 
