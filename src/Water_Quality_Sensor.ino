@@ -7,8 +7,8 @@
  
 #include "math.h" 
  
-#define TurbiditySensorPin A0               // Sensor pin for the Turbidity Sensor
-#define TdsSensorPin A5                     // Sensor pin for the TDS and EC Sensor
+#define TurbiditySensorPin A4               // Sensor pin for the Turbidity Sensor
+#define TdsSensorPin A3                     // Sensor pin for the TDS and EC Sensor
 #define VREF 3.3                            // analog reference voltage of the ADC
 #define SCOUNT 30                           // sum of sample point
 
@@ -105,17 +105,17 @@ void Turbidity() {
     if (turbidity < 20) {                                                   // You can determine you own thresholds.
         //Particle.publish("CLEAN: " + String(turbidity), PRIVATE);         // You can also add more if need be e.g. 0-5  = VERY CLEAN, 5-10 = CLEAN etc. 
           Serial.print("CLEAN: ");
-          Serial.print(turbidity, 2);
+          Serial.println(turbidity);
 
         } else  if ((turbidity > 20) && (turbidity < 50)) {                 // You can determine you own thresholds.
             //Particle.publish("MURKY: "+ String(turbidity), PRIVATE);
             Serial.print("MURKY: ");
-            Serial.print(turbidity, 2);
+            Serial.println(turbidity);
         
         } else if (turbidity > 50) {                                        // You can determine you own thresholds.
             //Particle.publish("DIRTY: "+ String(turbidity), PRIVATE);
             Serial.print("DIRTY: ");
-            Serial.print(turbidity, 2);
+            Serial.println(turbidity);
         }
 }
 
