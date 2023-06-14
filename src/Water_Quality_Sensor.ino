@@ -15,7 +15,7 @@
 #include "../lib/Adafruit_GFX_RK/src/FreeSans12pt7b.h"
 #include "../lib/Adafruit_GFX_RK/src/FreeSans9pt7b.h"
 #include <SPI.h>
- 
+
 #define TurbiditySensorPin A4               // Sensor pin for the Turbidity Sensor
 #define TdsSensorPin A3                     // Sensor pin for the TDS and EC Sensor
 #define VREF 3.3                            // analog reference voltage of the ADC
@@ -28,17 +28,26 @@ int analogBufferTemp[SCOUNT];               // DO NOT CHANGE THESE
 int analogBufferIndex = 0;
 int copyIndex = 0;
 
-float averageVoltage = 0;
+float prev_tdsValue = 0;
 float tdsValue = 0;
+
+float prev_ecValue = 0;
 float ecValue = 0;
+
 int temperature = 25;                       // Estimated water temperature.  Ideally we need to connect a temp sensor.
+float averageVoltage = 0;
 
 // Trubidity sensor declarations // 
 
 int TurbiditySensorValue = 0;               // Raw value read by Turbudity Senspor
 float turbidity_voltage = 0;                // Raw value mapped to 3V3
 float volt = 0;
-float ntu = 0;
+int sensorValue = 0;
+
+float prev_turbidity = 0;
+float turbidity = 0;
+
+
 //float turbidity_percentage = 0; 
 
 // ST7789 TFT  definitions // 
@@ -52,11 +61,79 @@ Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);     // Hardware 
 void setup() {
   
  Serial.begin(115200);
+
+  tft.init(320, 240);                                                 // Init ST7789 320x240 
+  tft.fillScreen(ST77XX_BLACK);                                       // creates black background in display
+  tft.setRotation(1); 
+
+  draw_screen();
  
  pinMode(TurbiditySensorPin,INPUT);         // Declare analog pins as input pins
  pinMode(TdsSensorPin, INPUT);
 
 }
+
+void draw_screen() {
+
+  tft.fillRect(0,0,160,120,ST77XX_BLUE);                                               // draws background fills for readings
+  //tft.fillRect(20,80,120,30,ST77XX_WHITE);
+  
+  tft.fillRect(160,0,160,120,ST77XX_GREEN);
+  //tft.fillRect(20,201,120,30,ST77XX_WHITE);                                               
+    
+  tft.fillRect(0,121,320,120,ST77XX_RED);
+  //tft.fillRect(181,80,120,30,ST77XX_WHITE);
+
+  ////// Main headings ///////
+  tft.setFont(&FreeSansBold12pt7b);
+  tft.setTextSize(1);
+  tft.setTextWrap(false);
+
+  tft.setTextColor(ST77XX_BLACK);
+  tft.setCursor(10, 30);                                                                 // set sursor to start writing text
+  tft.print("EC:  ");
+  tft.setFont(&FreeSans9pt7b);
+  tft.print("(mS/m)");
+
+  tft.setFont(&FreeSansBold12pt7b);
+  tft.setCursor(170, 30);
+  tft.print("TDS:  ");
+  tft.setFont(&FreeSans9pt7b);
+  tft.print("(ppm/m)");
+
+  tft.setFont(&FreeSansBold12pt7b);
+  tft.setCursor(10, 150); 
+  tft.print("Turbidity:  ");
+  tft.setFont(&FreeSans9pt7b);
+  tft.print("(NTU)");
+}
+
+//void print_values() {
+   
+  // tft.setFont(&FreeSansBold12pt7b);
+  // tft.setTextSize(2);
+  // tft.setTextWrap(false);
+  
+  // tft.setCursor(15, 80);
+  // tft.setTextColor(ST77XX_BLUE);
+  // tft.println(prev_ecValue);
+  // tft.setCursor(15, 80);
+  // tft.setTextColor(ST77XX_WHITE);
+  // tft.println(ecValue);
+
+  // prev_ecValue = ecValue;
+  
+  // tft.setCursor(175, 80); 
+  // tft.setTextColor(ST77XX_GREEN);
+  // tft.println(prev_tdsValue);
+  // tft.setCursor(175, 80); 
+  // tft.setTextColor(ST77XX_WHITE);
+  // tft.println(tdsValue);
+  
+  // prev_tdsValue = tdsValue;
+
+  // delay(50);
+//}
 
 void TDS() {
 
@@ -94,6 +171,30 @@ void TDS() {
   Serial.print("EC Value:");
   Serial.print(ecValue, 2);
   Serial.println("mS/m");
+
+  tft.setFont(&FreeSansBold12pt7b);
+  tft.setTextSize(2);
+  tft.setTextWrap(false);
+  
+  tft.setCursor(15, 80);
+  tft.setTextColor(ST77XX_BLUE);
+  tft.println(prev_ecValue);
+  tft.setCursor(15, 80);
+  tft.setTextColor(ST77XX_WHITE);
+  tft.println(ecValue);
+
+  prev_ecValue = ecValue;
+  
+  tft.setCursor(175, 80); 
+  tft.setTextColor(ST77XX_GREEN);
+  tft.println(prev_tdsValue);
+  tft.setCursor(175, 80); 
+  tft.setTextColor(ST77XX_WHITE);
+  tft.println(tdsValue);
+  
+  prev_tdsValue = tdsValue;
+
+  delay(50);
   
   //Particle.publish("TDS:" + String(tdsValue, 2) + "ppm", PRIVATE);        // Uncomment if you want to publish to Particle Cloud
   //Particle.publish("EC:" + String(ecValue, 2) + "mS/m", PRIVATE);
@@ -102,8 +203,6 @@ void TDS() {
 }
 
 void Turbidity() {
-
-  int sensorValue = 0;
   
   for(int i=0; i<1000; i++) {                                               // Take 1000 samples and average 
     sensorValue += (analogRead(TurbiditySensorPin));
@@ -111,28 +210,60 @@ void Turbidity() {
 
     sensorValue = sensorValue/1000;
 
-    
   //sensorValue = analogRead(TurbiditySensorPin);
   Serial.println(sensorValue);
   
-  int turbidity = map(sensorValue, 30, 990, 100, 0);                        // sensor calibration, sensor min value, sensor max value.  Map to 0 - 100. 
+  float turbidity = map(sensorValue, 1100, 1650, 100, 0);                        // sensor calibration, sensor min value, sensor max value.  Map to 0 - 100. 
   delay(100);
+
+    if (turbidity < 0) { 
+      turbidity = 0;
+    } 
   
     if (turbidity < 20) {                                                   // You can determine you own thresholds.
         //Particle.publish("CLEAN: " + String(turbidity), PRIVATE);         // You can also add more if need be e.g. 0-5  = VERY CLEAN, 5-10 = CLEAN etc. 
           Serial.print("CLEAN: ");
           Serial.println(turbidity);
+          tft.fillRect(115,151,180,59,ST77XX_RED);
+          tft.setTextColor(ST77XX_WHITE);
+          tft.setCursor(130, 205);
+          tft.print("CLEAN");
 
-        } else  if ((turbidity > 20) && (turbidity < 50)) {                 // You can determine you own thresholds.
+
+        } else if ((turbidity > 20) && (turbidity < 50)) {                 // You can determine you own thresholds.
             //Particle.publish("MURKY: "+ String(turbidity), PRIVATE);
             Serial.print("MURKY: ");
             Serial.println(turbidity);
+            tft.fillRect(115,151,180,59,ST77XX_RED);
+            tft.setTextColor(ST77XX_WHITE);
+            tft.setCursor(130, 205);
+            tft.print("MURKY");
+ 
         
         } else if (turbidity > 50) {                                        // You can determine you own thresholds.
             //Particle.publish("DIRTY: "+ String(turbidity), PRIVATE);
             Serial.print("DIRTY: ");
             Serial.println(turbidity);
+            tft.fillRect(115,151,180,59,ST77XX_RED);
+            tft.setTextColor(ST77XX_WHITE);
+            tft.setCursor(130, 205);
+            tft.print("DIRTY");
         }
+
+  tft.setFont(&FreeSansBold12pt7b);
+  tft.setTextSize(2);
+  tft.setTextWrap(false);
+
+  tft.setCursor(15, 205);
+  tft.setTextColor(ST77XX_RED);
+  tft.println(prev_turbidity);
+  tft.setCursor(15, 205);
+  tft.setTextColor(ST77XX_WHITE);
+  tft.println(turbidity); 
+
+  prev_turbidity = turbidity;
+
+  delay(50);
 }
 
 void loop() {
@@ -140,6 +271,7 @@ void loop() {
   TDS();                         // If using Particle Publish using timers not to exceed 
   Turbidity();                   // the rate limit!  DO NOT USE DELAY() as it will cause
                                  // the EC sensor to function incorrectly.                                                                                                     
+  //print_values();
 }
 
 
