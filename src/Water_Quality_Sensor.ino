@@ -14,7 +14,6 @@
 #include "../lib/Adafruit_GFX_RK/src/FreeSansBold9pt7b.h"
 #include "../lib/Adafruit_GFX_RK/src/FreeSans12pt7b.h"
 #include "../lib/Adafruit_GFX_RK/src/FreeSans9pt7b.h"
-#include "../lib/GFX/src/icon.h"
 #include <SPI.h>
  
 #define TurbiditySensorPin A4               // Sensor pin for the Turbidity Sensor

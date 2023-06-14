@@ -20,7 +20,6 @@
 #include "../lib/Adafruit_GFX_RK/src/FreeSansBold9pt7b.h"
 #include "../lib/Adafruit_GFX_RK/src/FreeSans12pt7b.h"
 #include "../lib/Adafruit_GFX_RK/src/FreeSans9pt7b.h"
-#include "../lib/GFX/src/icon.h"
 #include <SPI.h>
  
 void setup();
@@ -28,7 +27,7 @@ void TDS();
 void Turbidity();
 void loop();
 int getMedianNum(int bArray[], int iFilterLen);
-#line 20 "/Users/friedl/Desktop/Projects/Water_Quality_Sensor/src/Water_Quality_Sensor.ino"
+#line 19 "/Users/friedl/Desktop/Projects/Water_Quality_Sensor/src/Water_Quality_Sensor.ino"
 #define TurbiditySensorPin A4               // Sensor pin for the Turbidity Sensor
 #define TdsSensorPin A3                     // Sensor pin for the TDS and EC Sensor
 #define VREF 3.3                            // analog reference voltage of the ADC
