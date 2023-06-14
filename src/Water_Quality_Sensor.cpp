@@ -12,13 +12,23 @@
  */
  
 #include "math.h" 
+
+// Include ST7789 TFT Display libraries //
+#include "../lib/Adafruit_GFX_RK/src/Adafruit_GFX.h"
+#include "../lib/Adafruit_ST7735_RK/src/Adafruit_ST7789.h"
+#include "../lib/Adafruit_GFX_RK/src/FreeSansBold12pt7b.h"
+#include "../lib/Adafruit_GFX_RK/src/FreeSansBold9pt7b.h"
+#include "../lib/Adafruit_GFX_RK/src/FreeSans12pt7b.h"
+#include "../lib/Adafruit_GFX_RK/src/FreeSans9pt7b.h"
+#include "../lib/GFX/src/icon.h"
+#include <SPI.h>
  
 void setup();
 void TDS();
 void Turbidity();
 void loop();
 int getMedianNum(int bArray[], int iFilterLen);
-#line 10 "/Users/friedl/Desktop/Projects/Water_Quality_Sensor/src/Water_Quality_Sensor.ino"
+#line 20 "/Users/friedl/Desktop/Projects/Water_Quality_Sensor/src/Water_Quality_Sensor.ino"
 #define TurbiditySensorPin A4               // Sensor pin for the Turbidity Sensor
 #define TdsSensorPin A3                     // Sensor pin for the TDS and EC Sensor
 #define VREF 3.3                            // analog reference voltage of the ADC
@@ -43,6 +53,13 @@ float turbidity_voltage = 0;                // Raw value mapped to 3V3
 float volt = 0;
 float ntu = 0;
 //float turbidity_percentage = 0; 
+
+// ST7789 TFT  definitions // 
+#define TFT_CS        S3                                            // Define CS pin for TFT display
+#define TFT_RST       D6                                            // Define RST pin for TFT display
+#define TFT_DC        D5                                            // Define DC pin for TFT display
+
+Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);     // Hardware SPI
 
 
 void setup() {
@@ -117,12 +134,12 @@ void Turbidity() {
     if (turbidity < 20) {                                                   // You can determine you own thresholds.
         //Particle.publish("CLEAN: " + String(turbidity), PRIVATE);         // You can also add more if need be e.g. 0-5  = VERY CLEAN, 5-10 = CLEAN etc. 
           Serial.print("CLEAN: ");
-          Serial.println(turbidity, 2);
+          Serial.println(turbidity);
 
         } else  if ((turbidity > 20) && (turbidity < 50)) {                 // You can determine you own thresholds.
             //Particle.publish("MURKY: "+ String(turbidity), PRIVATE);
             Serial.print("MURKY: ");
-            Serial.println(turbidity, 2);
+            Serial.println(turbidity);
         
         } else if (turbidity > 50) {                                        // You can determine you own thresholds.
             //Particle.publish("DIRTY: "+ String(turbidity), PRIVATE);
