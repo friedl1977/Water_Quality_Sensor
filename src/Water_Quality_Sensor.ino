@@ -6,6 +6,16 @@
  */
  
 #include "math.h" 
+
+// Include ST7789 TFT Display libraries //
+#include "../lib/Adafruit_GFX_RK/src/Adafruit_GFX.h"
+#include "../lib/Adafruit_ST7735_RK/src/Adafruit_ST7789.h"
+#include "../lib/Adafruit_GFX_RK/src/FreeSansBold12pt7b.h"
+#include "../lib/Adafruit_GFX_RK/src/FreeSansBold9pt7b.h"
+#include "../lib/Adafruit_GFX_RK/src/FreeSans12pt7b.h"
+#include "../lib/Adafruit_GFX_RK/src/FreeSans9pt7b.h"
+#include "../lib/GFX/src/icon.h"
+#include <SPI.h>
  
 #define TurbiditySensorPin A4               // Sensor pin for the Turbidity Sensor
 #define TdsSensorPin A3                     // Sensor pin for the TDS and EC Sensor
@@ -31,6 +41,13 @@ float turbidity_voltage = 0;                // Raw value mapped to 3V3
 float volt = 0;
 float ntu = 0;
 //float turbidity_percentage = 0; 
+
+// ST7789 TFT  definitions // 
+#define TFT_CS        S3                                            // Define CS pin for TFT display
+#define TFT_RST       D6                                            // Define RST pin for TFT display
+#define TFT_DC        D5                                            // Define DC pin for TFT display
+
+Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);     // Hardware SPI
 
 
 void setup() {
