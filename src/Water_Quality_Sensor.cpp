@@ -226,7 +226,7 @@ void Turbidity() {
   //sensorValue = analogRead(TurbiditySensorPin);
   Serial.println(sensorValue);
   
-  float turbidity = map(sensorValue, 1100, 1650, 100, 0);                        // sensor calibration, sensor min value, sensor max value.  Map to 0 - 100. 
+  float turbidity = map(sensorValue, 1100, 1625, 100, 0);                        // sensor calibration, sensor min value, sensor max value.  Map to 0 - 100. 
   delay(100);
 
     if (turbidity < 0) { 
