@@ -4,8 +4,6 @@
  * Author:  F BASSON ~ FireFli
  * Date: 13 June 2023
  */
- 
-#include "math.h" 
 
 // Include ST7789 TFT Display libraries //
 #include "../lib/Adafruit_GFX_RK/src/Adafruit_GFX.h"
@@ -75,14 +73,9 @@ void setup() {
 
 void draw_screen() {
 
-  tft.fillRect(0,0,160,120,ST77XX_BLUE);                                               // draws background fills for readings
-  //tft.fillRect(20,80,120,30,ST77XX_WHITE);
-  
-  tft.fillRect(160,0,160,120,ST77XX_GREEN);
-  //tft.fillRect(20,201,120,30,ST77XX_WHITE);                                               
-    
-  tft.fillRect(0,121,320,120,ST77XX_RED);
-  //tft.fillRect(181,80,120,30,ST77XX_WHITE);
+  tft.fillRect(0,0,155,115,ST77XX_BLUE);                                               // draws background fills for readings
+  tft.fillRect(165,0,155,115,ST77XX_GREEN);                                            
+  tft.fillRect(0,125,320,115,ST77XX_RED);
 
   ////// Main headings ///////
   tft.setFont(&FreeSansBold12pt7b);
@@ -107,33 +100,6 @@ void draw_screen() {
   tft.setFont(&FreeSans9pt7b);
   tft.print("(NTU)");
 }
-
-//void print_values() {
-   
-  // tft.setFont(&FreeSansBold12pt7b);
-  // tft.setTextSize(2);
-  // tft.setTextWrap(false);
-  
-  // tft.setCursor(15, 80);
-  // tft.setTextColor(ST77XX_BLUE);
-  // tft.println(prev_ecValue);
-  // tft.setCursor(15, 80);
-  // tft.setTextColor(ST77XX_WHITE);
-  // tft.println(ecValue);
-
-  // prev_ecValue = ecValue;
-  
-  // tft.setCursor(175, 80); 
-  // tft.setTextColor(ST77XX_GREEN);
-  // tft.println(prev_tdsValue);
-  // tft.setCursor(175, 80); 
-  // tft.setTextColor(ST77XX_WHITE);
-  // tft.println(tdsValue);
-  
-  // prev_tdsValue = tdsValue;
-
-  // delay(50);
-//}
 
 void TDS() {
 
@@ -213,7 +179,7 @@ void Turbidity() {
   //sensorValue = analogRead(TurbiditySensorPin);
   Serial.println(sensorValue);
   
-  float turbidity = map(sensorValue, 1100, 1625, 100, 0);                        // sensor calibration, sensor min value, sensor max value.  Map to 0 - 100. 
+  float turbidity = map(sensorValue, 1100, 1625, 100, 0);                   // sensor calibration, sensor min value, sensor max value.  Map to 0 - 100. 
   delay(100);
 
     if (turbidity < 0) { 
@@ -271,7 +237,6 @@ void loop() {
   TDS();                         // If using Particle Publish using timers not to exceed 
   Turbidity();                   // the rate limit!  DO NOT USE DELAY() as it will cause
                                  // the EC sensor to function incorrectly.                                                                                                     
-  //print_values();
 }
 
 
