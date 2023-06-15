@@ -76,6 +76,7 @@ void draw_screen() {
   tft.fillRect(0,0,155,115,ST77XX_BLUE);                                               // draws background fills for readings
   tft.fillRect(165,0,155,115,ST77XX_GREEN);                                            
   tft.fillRect(0,125,320,115,ST77XX_RED);
+  tft.fillRect(0,115,320,10, ST77XX_BLACK);
 
   ////// Main headings ///////
   tft.setFont(&FreeSansBold12pt7b);
@@ -190,7 +191,7 @@ void Turbidity() {
         //Particle.publish("CLEAN: " + String(turbidity), PRIVATE);         // You can also add more if need be e.g. 0-5  = VERY CLEAN, 5-10 = CLEAN etc. 
           Serial.print("CLEAN: ");
           Serial.println(turbidity);
-          tft.fillRect(115,151,180,59,ST77XX_RED);
+          tft.fillRect(115,151,200,59,ST77XX_RED);
           tft.setTextColor(ST77XX_WHITE);
           tft.setCursor(150, 205);
           tft.print("CLEAN");
@@ -200,7 +201,7 @@ void Turbidity() {
             //Particle.publish("MURKY: "+ String(turbidity), PRIVATE);
             Serial.print("MURKY: ");
             Serial.println(turbidity);
-            tft.fillRect(115,151,180,59,ST77XX_RED);
+            tft.fillRect(115,151,200,59,ST77XX_RED);
             tft.setTextColor(ST77XX_WHITE);
             tft.setCursor(150, 205);
             tft.print("MURKY");
@@ -210,7 +211,7 @@ void Turbidity() {
             //Particle.publish("DIRTY: "+ String(turbidity), PRIVATE);
             Serial.print("DIRTY: ");
             Serial.println(turbidity);
-            tft.fillRect(115,151,180,59,ST77XX_RED);
+            tft.fillRect(115,151,200,59,ST77XX_RED);
             tft.setTextColor(ST77XX_WHITE);
             tft.setCursor(150, 205);
             tft.print("DIRTY");
