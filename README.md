@@ -1,6 +1,6 @@
 # Water_Quality_Sensor
 
-A Particle project named Water_Quality_Sensor
+A Particle Photon 2 Tutorial
 
 ## Welcome to your project!
 
